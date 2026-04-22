@@ -1,0 +1,61 @@
+.app {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+h1 {
+  margin-bottom: 1.5rem;
+}
+
+.search-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.search-input {
+  width: 340px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #888;
+  border-radius: 8px;
+}
+
+.search-button {
+  width: 120px;
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.employees-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.employees-table th,
+.employees-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border: none;
+}
+
+.employees-table thead tr {
+  border-bottom: 1px solid #ccc;
+}
+
+.employees-table tbody tr {
+  border-bottom: 1px solid #eee;
+}
+
+.error {
+  color: red;
+}

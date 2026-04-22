@@ -1,0 +1,97 @@
+services:
+  postgres:
+    build: ./database
+    container_name: my_postgres
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER -d $POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    container_name: my_backend
+    ports:
+      - "8080:8080"
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - network
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./frontend
+    container_name: my_frontend
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "5173:5173"
+    networks:
+      - network
+    depends_on:
+      backend:
+        condition: service_healthy
+
+  postgres_exporter:
+    build: ./monitoring/postgres_exporter
+    container_name: my_postgres_exporter
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - network
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  prometheus:
+    build: ./monitoring/prometheus
+    container_name: my_prometheus
+    env_file:
+      - .env
+    ports:
+      - "9090:9090"
+    restart: always
+    networks:
+      - network
+    depends_on:
+      - backend
+
+  grafana:
+    build: ./monitoring/grafana
+    container_name: my_grafana
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    restart: always
+    networks:
+      - network
+    depends_on:
+      - prometheus
+
+volumes:
+  pgdata:
+  grafana_data:
+
+networks:
+  network:
+    driver: bridge
